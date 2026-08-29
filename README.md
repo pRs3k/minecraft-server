@@ -10,6 +10,13 @@ Open PowerShell and run:
 irm https://raw.githubusercontent.com/pRs3k/minecraft-server/main/install-mods.ps1 | iex
 ```
 
+**Don't use GitHub's "Code > Download ZIP" button and run the `.ps1` file from there.**
+Windows blocks locally-downloaded scripts from running by default (an "execution policy"
+error mentioning `about_Execution_Policies`), since that's usually a sign of a
+malicious file - unrelated to this script specifically, but it'll stop you either way.
+Use the one-liner above instead: it runs the script directly in your PowerShell session
+without ever saving a `.ps1` file to disk, so that restriction doesn't apply.
+
 That's it. It checks your `%APPDATA%\.minecraft\mods` folder against the server's current
 mod list, downloads anything missing or outdated, and removes old versions of mods it
 previously installed (it never touches mods you added yourself that aren't part of the
