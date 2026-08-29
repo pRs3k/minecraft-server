@@ -15,6 +15,43 @@ mod list, downloads anything missing or outdated, and removes old versions of mo
 previously installed (it never touches mods you added yourself that aren't part of the
 server's list). Re-run it any time the server's mods change.
 
+After syncing, it also checks whether any of your *other* mods (things you installed
+yourself, like audio/visual enhancers) have a hard dependency on one of the mods it just
+updated - e.g. a mod that requires a specific version of a shared library we changed. It
+only acts if that dependency is now genuinely unmet (the kind of thing that stops
+Minecraft from booting at all, not just a suggestion or a soft warning). If it finds one,
+it looks for an updated build of *your* mod that's actually compatible - verified by
+reading that build's own declared dependencies, not just assumed - and swaps it in. If it
+can't find a compatible build automatically, it tells you exactly which mod is affected
+and links you to check manually.
+
+**Known limitations of this check:**
+- It matches your mod to a Modrinth project using its Fabric mod ID as the project slug.
+  This works for most mods but isn't guaranteed - some mods use a different slug than
+  their mod ID, in which case you'll just get the "check manually" message instead of an
+  automatic fix.
+- It only checks hard `depends` relationships (the ones that actually prevent booting),
+  not `recommends`/`suggests`/`conflicts` (soft) or `breaks` (a different, rarer
+  mechanism this doesn't currently check).
+- It only checks dependencies on mods *this script* manages - it doesn't try to resolve
+  conflicts between two of your own unrelated mods, since we have no control over those
+  either way.
+
+### Finding your Minecraft folder
+
+The script checks the vanilla/official launcher's folder plus Prism Launcher, MultiMC,
+the CurseForge app, and the Modrinth App - whichever of those you have installed.
+
+- If it finds exactly one, it uses that automatically.
+- If it finds more than one (e.g. you have both the vanilla launcher and Prism
+  installed), it lists them and asks you to pick.
+- If you use a launcher it doesn't recognize, or want to point it at a specific
+  instance directly, pass it explicitly - this also works through the one-liner:
+
+```powershell
+& ([ScriptBlock]::Create((irm https://raw.githubusercontent.com/pRs3k/minecraft-server/main/install-mods.ps1))) -MinecraftDir "C:\path\to\your\.minecraft"
+```
+
 ## For the admin (updating the mod list)
 
 Whenever you add, remove, or update a mod on the server:
