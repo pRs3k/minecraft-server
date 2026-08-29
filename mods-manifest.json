@@ -1,0 +1,165 @@
+{
+  "mods": [
+    {
+      "filename": "Beekeeper-1.21-1.0.5.jar",
+      "sha1": "bffc6950b3efec37efcf4b8f5f5e3c4000e0da99",
+      "size": 56835,
+      "source": "direct",
+      "url": "https://raw.githubusercontent.com/pRs3k/minecraft-server/main/extra-mods/Beekeeper-1.21-1.0.5.jar"
+    },
+    {
+      "filename": "Chunky-Fabric-1.4.23.jar",
+      "sha1": "6c8098fc0f124c7b6492de60db0108747f7f9821",
+      "size": 342979,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/fALzjamp/versions/RVFHfo1D/Chunky-Fabric-1.4.23.jar"
+    },
+    {
+      "filename": "Cobblemon-fabric-1.7.3+1.21.1.jar",
+      "sha1": "f192cda3fdfec0f20d1dee1887ec1b9e77b1618c",
+      "size": 135801550,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/kF7CvxTo/Cobblemon-fabric-1.7.3%2B1.21.1.jar"
+    },
+    {
+      "filename": "Explorify v1.6.5.mod.jar",
+      "sha1": "5fb28be29200a41b034e423d87823eb19ad651cd",
+      "size": 767884,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/HSfsxuTo/versions/CuBdAr31/Explorify%20v1.6.5.mod.jar"
+    },
+    {
+      "filename": "ForgeConfigAPIPort-v21.1.3-1.21.1-Fabric.jar",
+      "sha1": "e26f1b5dcdb1b05abe9c223bcf47057622afd432",
+      "size": 631046,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/ohNO6lps/versions/NqVx7ywO/ForgeConfigAPIPort-v21.1.3-1.21.1-Fabric.jar"
+    },
+    {
+      "filename": "MoreBeeInfo-fabric-1.21-2.0.0.jar",
+      "sha1": "8d56c782086c17e32457a2513f2096466aeb28a2",
+      "size": 90636,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/N2XKPu4u/versions/AKc62OKq/MoreBeeInfo-fabric-1.21-2.0.0.jar"
+    },
+    {
+      "filename": "Structory_26.1_v1.3.16.jar",
+      "sha1": "ee48f145a3a09fdb3f492576cbc21ed26abc74bb",
+      "size": 1261336,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/aKCwCJlY/versions/Nvh2sSPX/Structory_26.1_v1.3.16.jar"
+    },
+    {
+      "filename": "Terralith_1.21.x_v2.6.2.jar",
+      "sha1": "c200e0c01f48aecd7f34c4be337d8ff65b60c2dc",
+      "size": 2813817,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/8oi3bsk5/versions/eWDLFabb/Terralith_1.21.x_v2.6.2.jar"
+    },
+    {
+      "filename": "anvianslib-fabric-1.21-1.4.2.jar",
+      "sha1": "61e56cab25eaec0ef53b011922b26344e06d2fe6",
+      "size": 30396,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/PuTjrq4T/versions/AqotrEdS/anvianslib-fabric-1.21-1.4.2.jar"
+    },
+    {
+      "filename": "collective-1.21.1-8.31.jar",
+      "sha1": "5801213cf54ecefd646d4ab8e403887bcb47681a",
+      "size": 1031111,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/e0M1UDsY/versions/mofpoWGq/collective-1.21.1-8.31.jar"
+    },
+    {
+      "filename": "cristellib-fabric-1.21.1-3.1.7.jar",
+      "sha1": "4f966c3efd6ecfe679aac64ba7c6f4d4a648ad5b",
+      "size": 584853,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/cl223EMc/versions/K1dyr5gj/cristellib-fabric-1.21.1-3.1.7.jar"
+    },
+    {
+      "filename": "custom-portals-3.6.2-1.21.jar",
+      "sha1": "601fad41ec52f66f5117574091987a5898c5968a",
+      "size": 894940,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/38pHU3u5/versions/aF2C6QzM/custom-portals-3.6.2-1.21.jar"
+    },
+    {
+      "filename": "customdimensions-1.1.3.jar",
+      "sha1": "607b30e605ce1bd5aa9016a7bc7ba8e39d53cf7e",
+      "size": 42878,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/7PZGudIr/versions/xGwEip4o/customdimensions-1.1.3.jar"
+    },
+    {
+      "filename": "fabric-api-0.116.12+1.21.1.jar",
+      "sha1": "90cd4212da24365fae24c0090234b053094b218b",
+      "size": 2427037,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/Lwt6YYHL/fabric-api-0.116.12%2B1.21.1.jar"
+    },
+    {
+      "filename": "lithostitched-1.7.12-fabric-21.1.jar",
+      "sha1": "5c261a818144a9f1f5d25149dac4f1059a4ac9e0",
+      "size": 827221,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/XaDC71GB/versions/xziCgMIU/lithostitched-1.7.12-fabric-21.1.jar"
+    },
+    {
+      "filename": "mcw-holidays-1.1.2-mc1.21.1fabric.jar",
+      "sha1": "59a0d8de46d73ad29c907715d0e2c4973f7c369b",
+      "size": 999600,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/rH20L2Lp/versions/lUJ6xjps/mcw-holidays-1.1.2-mc1.21.1fabric.jar"
+    },
+    {
+      "filename": "mobcontrol-1.21.1-2.0.0-release.jar",
+      "sha1": "4ece49f973c95afb48404ecc65118ed37fb71883",
+      "size": 219073,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/4gTwBSot/versions/4oIx2rsI/mobcontrol-1.21.1-2.0.0-release.jar"
+    },
+    {
+      "filename": "neobeefix-1.21.1-2.0.1.jar",
+      "sha1": "4f6f507b948d5ed8290e643b6fff79130a47fff0",
+      "size": 33640,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/DzSY371i/versions/OPfD9I5Y/neobeefix-1.21.1-2.0.1.jar"
+    },
+    {
+      "filename": "open-parties-and-claims-fabric-1.21.1-0.24.0.jar",
+      "sha1": "d7fd28a5827b925c8d6fe55bbd4715ff59206c21",
+      "size": 1335450,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/gF3BGWvG/versions/4x8OoQC3/open-parties-and-claims-fabric-1.21.1-0.24.0.jar"
+    },
+    {
+      "filename": "realisticbees-1.21.1-4.2.jar",
+      "sha1": "3f23eb79f92ba5571246909f6b3fe4dfcf560497",
+      "size": 62383,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/tG6HkcWx/versions/KTWiwQK4/realisticbees-1.21.1-4.2.jar"
+    },
+    {
+      "filename": "t_and_t-neoforge-fabric-1.13.7+1.21.1.jar",
+      "sha1": "eb7666961fb0b0d0ff8bc01ff62194952f6b6b8c",
+      "size": 3641681,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/DjLobEOy/versions/E4Wy3O8Y/t_and_t-neoforge-fabric-1.13.7%2B1.21.1.jar"
+    },
+    {
+      "filename": "tectonic-3.0.22-fabric-21.1.jar",
+      "sha1": "8b6cc090a6fe8c3eed7494fb5f05f3f00637595e",
+      "size": 334313,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/lWDHr9jE/versions/cXSQRWNy/tectonic-3.0.22-fabric-21.1.jar"
+    },
+    {
+      "filename": "yet_another_config_lib_v3-3.8.2+1.21.1-fabric.jar",
+      "sha1": "e075503382f70715ab9fc6f66d603397a86eb3e0",
+      "size": 1131265,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/1eAoo2KR/versions/o3cDn8Vp/yet_another_config_lib_v3-3.8.2%2B1.21.1-fabric.jar"
+    }
+  ]
+}
