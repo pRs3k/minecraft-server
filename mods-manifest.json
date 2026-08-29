@@ -36,6 +36,13 @@
       "url": "https://cdn.modrinth.com/data/XaDC71GB/versions/xziCgMIU/lithostitched-1.7.12-fabric-21.1.jar"
     },
     {
+      "filename": "naturalist-2.0.3-fabric-1.21.1.jar",
+      "sha1": "0f12c41e514a553a3188699112761f2d6b6521e5",
+      "size": 11240621,
+      "source": "modrinth",
+      "url": "https://cdn.modrinth.com/data/F8BQNPWX/versions/DwMaTECx/naturalist-2.0.3-fabric-1.21.1.jar"
+    },
+    {
       "filename": "mcw-holidays-1.1.2-mc1.21.1fabric.jar",
       "sha1": "59a0d8de46d73ad29c907715d0e2c4973f7c369b",
       "size": 999600,
