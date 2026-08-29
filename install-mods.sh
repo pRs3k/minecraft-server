@@ -9,7 +9,25 @@
 # To point at a specific Minecraft folder instead of auto-detecting:
 #   MC_DIR="/path/to/.minecraft" bash -c "$(curl -fsSL https://raw.githubusercontent.com/pRs3k/minecraft-server/main/install-mods.sh)"
 
-set -uo pipefail
+# NOTE: macOS ships bash 3.2 by default (Apple froze it there in 2007 over GPLv3
+# licensing) - no associative arrays, no mapfile/readarray, and its handling of
+# empty arrays under `set -u` is inconsistent. Every construct in this script is
+# deliberately written to work on 3.2, not just modern bash - see the comments
+# near contains_element() and find_minecraft_candidates() below. Don't add
+# `declare -A`, `mapfile`, or `${var,,}`/`${var^^}` without re-verifying this.
+set -o pipefail
+
+# Returns 0 if $1 is present in the remaining arguments - a plain-array substitute
+# for "is this key in the set", since bash 3.2 doesn't have associative arrays.
+contains_element() {
+    local needle="$1"
+    shift
+    local e
+    for e in "$@"; do
+        [ "$e" = "$needle" ] && return 0
+    done
+    return 1
+}
 
 MANIFEST_URL="${MANIFEST_URL:-https://raw.githubusercontent.com/pRs3k/minecraft-server/main/mods-manifest.json}"
 GAME_VERSION="${GAME_VERSION:-1.21.1}"
@@ -83,7 +101,12 @@ find_minecraft_candidates() {
 }
 
 if [ -z "$MC_DIR" ]; then
-    mapfile -t candidates < <(find_minecraft_candidates)
+    # mapfile/readarray don't exist in bash 3.2 (macOS's default) - read manually.
+    candidates=()
+    while IFS= read -r line; do
+        [ -n "$line" ] && candidates+=("$line")
+    done < <(find_minecraft_candidates)
+
     if [ "${#candidates[@]}" -eq 0 ]; then
         MC_DIR="$HOME/Library/Application Support/minecraft"
         echo "No existing Minecraft installs found - defaulting to $MC_DIR"
@@ -91,8 +114,10 @@ if [ -z "$MC_DIR" ]; then
         MC_DIR="${candidates[0]}"
     else
         echo "Found more than one Minecraft install on this computer:"
-        for i in "${!candidates[@]}"; do
-            echo "  [$((i + 1))] ${candidates[$i]}"
+        num=0
+        for c in "${candidates[@]}"; do
+            num=$((num + 1))
+            echo "  [$num] $c"
         done
         read -r -p "Which one is for the Poke Server? Enter a number: " choice
         if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "${#candidates[@]}" ]; then
@@ -152,11 +177,12 @@ parse_manifest() {
     ' "$1"
 }
 
-declare -A current_filenames
-declare -A previously_managed
+# Plain indexed arrays, not associative (bash 3.2 on macOS has no declare -A).
+current_filenames=()
+previously_managed=()
 if [ -f "$STATE_FILE" ]; then
     while IFS= read -r f; do
-        [ -n "$f" ] && previously_managed["$f"]=1
+        [ -n "$f" ] && previously_managed+=("$f")
     done < "$STATE_FILE"
 fi
 
@@ -166,7 +192,7 @@ failed=()
 
 while IFS=$'\t' read -r filename sha1 url; do
     [ -z "$filename" ] && continue
-    current_filenames["$filename"]=1
+    current_filenames+=("$filename")
     dest="$MODS_DIR/$filename"
 
     needs_download=1
@@ -204,8 +230,8 @@ while IFS=$'\t' read -r filename sha1 url; do
 done < <(parse_manifest "$MANIFEST_TMP")
 
 removed=0
-for f in "${!previously_managed[@]}"; do
-    if [ -z "${current_filenames[$f]:-}" ]; then
+for f in "${previously_managed[@]}"; do
+    if ! contains_element "$f" "${current_filenames[@]}"; then
         old_path="$MODS_DIR/$f"
         if [ -f "$old_path" ]; then
             echo "  Removing outdated mod: $f"
@@ -216,7 +242,7 @@ for f in "${!previously_managed[@]}"; do
 done
 
 : > "$STATE_FILE"
-for f in "${!current_filenames[@]}"; do
+for f in "${current_filenames[@]}"; do
     echo "$f" >> "$STATE_FILE"
 done
 
@@ -245,7 +271,7 @@ fi
 echo ""
 echo "=== Checking for mods broken by this update ==="
 
-python3 - "$MODS_DIR" "$MC_DIR" "$GAME_VERSION" "${!current_filenames[@]}" <<'PYEOF'
+python3 - "$MODS_DIR" "$MC_DIR" "$GAME_VERSION" "${current_filenames[@]}" <<'PYEOF'
 import json, os, re, subprocess, sys, tempfile, urllib.request, zipfile
 
 mods_dir = sys.argv[1]
