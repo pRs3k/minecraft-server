@@ -4,7 +4,7 @@ Keeps your Minecraft mods folder in sync with whatever the server currently requ
 
 ## For players
 
-Open PowerShell and run:
+**Windows** - open PowerShell and run:
 
 ```powershell
 irm https://raw.githubusercontent.com/pRs3k/minecraft-server/main/install-mods.ps1 | iex
@@ -17,7 +17,21 @@ malicious file - unrelated to this script specifically, but it'll stop you eithe
 Use the one-liner above instead: it runs the script directly in your PowerShell session
 without ever saving a `.ps1` file to disk, so that restriction doesn't apply.
 
-That's it. It checks your `%APPDATA%\.minecraft\mods` folder against the server's current
+**macOS / Linux** - open Terminal and run:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/pRs3k/minecraft-server/main/install-mods.sh)"
+```
+
+This does the same thing as the Windows version (same detection, same safety checks) -
+it's a separate script rather than the same one, since PowerShell isn't something a Mac
+has installed by default and a native shell script is the normal way to do this there.
+It needs `python3` for the second phase (checking for mods broken by dependency changes)
+- macOS normally prompts to install Command Line Tools the first time you run `python3`
+if you don't already have it; if you skip that, the mod sync itself still completes
+fine, just without that second check.
+
+That's it. It checks your Minecraft `mods` folder against the server's current
 mod list, downloads anything missing or outdated, and removes old versions of mods it
 previously installed (it never touches mods you added yourself that aren't part of the
 server's list). Re-run it any time the server's mods change.
@@ -47,16 +61,23 @@ and links you to check manually.
 ### Finding your Minecraft folder
 
 The script checks the vanilla/official launcher's folder plus Prism Launcher, MultiMC,
-the CurseForge app, and the Modrinth App - whichever of those you have installed.
+and the Modrinth App - whichever of those you have installed. (There's no official
+CurseForge app for macOS, so that one's only checked on Windows.)
 
 - If it finds exactly one, it uses that automatically.
 - If it finds more than one (e.g. you have both the vanilla launcher and Prism
   installed), it lists them and asks you to pick.
 - If you use a launcher it doesn't recognize, or want to point it at a specific
-  instance directly, pass it explicitly - this also works through the one-liner:
+  instance directly, pass it explicitly:
 
+Windows, through the one-liner:
 ```powershell
 & ([ScriptBlock]::Create((irm https://raw.githubusercontent.com/pRs3k/minecraft-server/main/install-mods.ps1))) -MinecraftDir "C:\path\to\your\.minecraft"
+```
+
+macOS/Linux, as an environment variable before the command:
+```bash
+MC_DIR="/path/to/your/.minecraft" bash -c "$(curl -fsSL https://raw.githubusercontent.com/pRs3k/minecraft-server/main/install-mods.sh)"
 ```
 
 ## For the admin (updating the mod list)
