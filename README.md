@@ -42,3 +42,21 @@ instead.
 Versions are always pinned to an exact hash - the script never grabs "whatever's
 newest," since a player running a newer mod version than the server could break
 compatibility just as easily as running an older one.
+
+### Why the manifest doesn't include every mod in the server's `mods/` folder
+
+Not everything running on the server needs to be installed on a client to connect and
+play - a lot of it is server-only tooling (world generation, chunk pregeneration,
+dimension/claim management) that never touches anything the client renders or syncs.
+
+This list was trimmed down to exactly what a verified, already-working client actually
+has installed - confirmed by comparing a real client's mods folder against the
+server's. The following are deliberately left out because that working client doesn't
+have them and connects fine:
+
+`Chunky`, `Explorify`, `ForgeConfigAPIPort`, `MoreBeeInfo`, `Structory`, `Anvian's Lib`,
+`Collective`, `Cristel Lib`, `CustomDimensions`, `Neo Bee Fix`,
+`Open Parties and Claims`, `Realistic Bees`, `Towns and Towers`
+
+If the server ever starts requiring one of these client-side too (e.g. a future update
+changes that), add it back into `mods-manifest.json` the same way as any other mod.
