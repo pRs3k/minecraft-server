@@ -334,6 +334,74 @@ Get-ChildItem -Path $modsDir -Filter "*.jar" | ForEach-Object {
     }
 }
 
+# Fabric Loader itself (unlike a library mod) isn't a jar we can swap in the mods
+# folder - it's managed by the launcher as part of the instance/profile. We can't
+# auto-fix a mismatch here, but we can detect and warn loudly instead of letting the
+# game crash on launch with no warning (this is exactly the kind of thing that broke
+# for someone after Naturalist was added, requiring Fabric Loader 0.19.3+).
+$loaderRequirements = @()
+foreach ($filename in $jarInfoByFile.Keys) {
+    $info = $jarInfoByFile[$filename]
+    if ($info.depends -and ($info.depends.PSObject.Properties.Name -contains "fabricloader")) {
+        $range = ($info.depends.PSObject.Properties | Where-Object { $_.Name -eq "fabricloader" }).Value
+        $loaderRequirements += [PSCustomObject]@{ ModId = $info.id; Range = $range }
+    }
+}
+
+function Find-InstalledLoaderVersion($minecraftDir) {
+    # Vanilla/official launcher: versions\fabric-loader-<version>-<mcversion>\
+    $versionsDir = Join-Path $minecraftDir "versions"
+    if (Test-Path $versionsDir) {
+        $match = Get-ChildItem -Path $versionsDir -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match '^fabric-loader-([\d.]+)-' } |
+            Select-Object -First 1
+        if ($match -and $match.Name -match '^fabric-loader-([\d.]+)-') {
+            return $matches[1]
+        }
+    }
+    # Prism Launcher / MultiMC: the instance root (one level up from .minecraft)
+    # has an mmc-pack.json listing components, including the loader version.
+    $packPath = Join-Path (Split-Path $minecraftDir -Parent) "mmc-pack.json"
+    if (Test-Path $packPath) {
+        try {
+            $pack = Get-Content $packPath -Raw | ConvertFrom-Json
+            $comp = $pack.components | Where-Object { $_.uid -eq "net.fabricmc.fabric-loader" }
+            if ($comp) { return $comp.version }
+        } catch {}
+    }
+    return $null
+}
+
+if ($loaderRequirements.Count -gt 0) {
+    Write-Host ""
+    $detectedLoader = Find-InstalledLoaderVersion $MinecraftDir
+    $loaderOk = $true
+    $unsatisfied = @()
+    foreach ($req in $loaderRequirements) {
+        if ($detectedLoader -and -not (Test-VersionSatisfiesRange $detectedLoader $req.Range)) {
+            $loaderOk = $false
+            $unsatisfied += "$($req.ModId) needs Fabric Loader $($req.Range -join ', ')"
+        }
+    }
+
+    if ($detectedLoader -and $loaderOk) {
+        Write-Host "Fabric Loader $detectedLoader detected - satisfies everything installed." -ForegroundColor Green
+    } elseif ($detectedLoader -and -not $loaderOk) {
+        Write-Host "[WARNING] Your Fabric Loader ($detectedLoader) is too old for what's installed:" -ForegroundColor Red
+        foreach ($u in $unsatisfied) { Write-Host "  - $u" -ForegroundColor Red }
+        Write-Host "  Update Fabric Loader through your launcher - e.g. re-run the Fabric installer" -ForegroundColor Red
+        Write-Host "  (https://fabricmc.net/use/installer/) for the vanilla launcher, or change the" -ForegroundColor Red
+        Write-Host "  Fabric Loader component version in your instance's edit screen for Prism/MultiMC." -ForegroundColor Red
+    } else {
+        Write-Host "Note: some installed mods require a minimum Fabric Loader version:" -ForegroundColor Yellow
+        foreach ($req in $loaderRequirements) {
+            Write-Host "  - $($req.ModId) needs $($req.Range -join ', ')" -ForegroundColor Yellow
+        }
+        Write-Host "  Couldn't automatically detect your installed Fabric Loader version - if the" -ForegroundColor Yellow
+        Write-Host "  game fails to launch with a Fabric Loader error, update it through your launcher." -ForegroundColor Yellow
+    }
+}
+
 # Which mod ids do we manage (i.e. mods that were just possibly updated by phase 1)?
 $managedIds = @{}
 foreach ($filename in $currentFilenames.Keys) {
