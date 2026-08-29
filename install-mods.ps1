@@ -60,7 +60,12 @@ function Find-MinecraftCandidates {
         }
     }
 
-    return @($candidates | Select-Object -Unique)
+    # The leading comma is required: without it, PowerShell silently collapses a
+    # single-item array back to a plain string when it crosses a function's return
+    # boundary - and then $result[0] on a string returns its first CHARACTER, not
+    # the string itself. (Confirmed the hard way - this broke exactly this way for
+    # anyone with only the vanilla launcher installed.)
+    return ,@($candidates | Select-Object -Unique)
 }
 
 if (-not $MinecraftDir) {
