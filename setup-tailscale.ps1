@@ -73,7 +73,7 @@ if ($status -and $status.Self -and $status.Self.Online) {
     Write-Host "A browser window will open - log in (or create a free account) and accept the invite you were sent." -ForegroundColor Yellow
     Write-Host "Waiting for you to finish in the browser..." -ForegroundColor Yellow
 
-    Start-Process $tailscaleExe -ArgumentList "up", "--accept-dns=false" -NoNewWindow
+    Start-Process $tailscaleExe -ArgumentList "up" -NoNewWindow
 
     # Poll for connection, up to 3 minutes
     $connected = $false
