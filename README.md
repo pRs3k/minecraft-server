@@ -11,3 +11,13 @@ irm https://raw.githubusercontent.com/pRs3k/minecraft-server/main/install-mods.p
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/pRs3k/minecraft-server/main/install-mods.sh)"
 ```
+
+## Connecting to the server (Windows)
+
+The server is only reachable over Tailscale. Run this to install Tailscale and sign in:
+
+```powershell
+irm https://raw.githubusercontent.com/pRs3k/minecraft-server/main/setup-tailscale.ps1 | iex
+```
+
+You'll need an invite to the Tailscale network first - ask whoever's hosting the server. Once connected, they'll give you the server address to add in Minecraft.
