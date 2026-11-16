@@ -216,10 +216,61 @@ function Test-VersionSatisfiesRange($version, $rangeValue) {
     return $true
 }
 
-# =============================== Phase 1: sync ===============================
+# Finds the installed Fabric Loader version for the given Minecraft version, or $null
+# if there isn't one. Only a loader built for $gameVersion counts - a Fabric loader
+# for some other Minecraft version can't run the server's mods.
+function Find-InstalledLoaderVersion($minecraftDir, $gameVersion) {
+    # Vanilla/official launcher: versions\fabric-loader-<version>-<mcversion>\
+    $versionsDir = Join-Path $minecraftDir "versions"
+    if (Test-Path $versionsDir) {
+        $pattern = '^fabric-loader-([\d.]+)-' + [regex]::Escape($gameVersion) + '$'
+        $match = Get-ChildItem -Path $versionsDir -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match $pattern } |
+            Select-Object -First 1
+        if ($match -and $match.Name -match $pattern) {
+            return $matches[1]
+        }
+    }
+    # Prism Launcher / MultiMC: the instance root (one level up from .minecraft)
+    # has an mmc-pack.json listing components, including the loader version.
+    $packPath = Join-Path (Split-Path $minecraftDir -Parent) "mmc-pack.json"
+    if (Test-Path $packPath) {
+        try {
+            $pack = Get-Content $packPath -Raw | ConvertFrom-Json
+            $comp = $pack.components | Where-Object { $_.uid -eq "net.fabricmc.fabric-loader" }
+            if ($comp) { return $comp.version }
+        } catch {}
+    }
+    return $null
+}
+
+function Write-FabricMissingWarning {
+    Write-Host "[WARNING] Fabric Loader for Minecraft $GameVersion is NOT installed in this folder." -ForegroundColor Red
+    Write-Host "  Without it your launcher has no profile that can run the server's mods, so you" -ForegroundColor Red
+    Write-Host "  won't be able to join. To fix it:" -ForegroundColor Red
+    Write-Host "    1. Download and run the Fabric installer: https://fabricmc.net/use/installer/" -ForegroundColor Red
+    Write-Host "    2. Pick Minecraft $GameVersion, keep 'Create profile' ticked, click Install." -ForegroundColor Red
+    Write-Host "    3. Restart the Minecraft launcher and choose the new fabric-loader profile." -ForegroundColor Red
+    Write-Host "  (Prism/MultiMC users: add Fabric Loader to your instance in its edit screen.)" -ForegroundColor Red
+}
+
+# =============================== Phase 0: Fabric check ===============================
 
 Write-Host "=== Poke Server mod sync ===" -ForegroundColor Cyan
 Write-Host "Minecraft folder: $MinecraftDir"
+
+$preflightLoader = Find-InstalledLoaderVersion $MinecraftDir $GameVersion
+$fabricMissing = -not $preflightLoader
+if ($fabricMissing) {
+    Write-Host ""
+    Write-FabricMissingWarning
+    Write-Host "  Continuing with the mod sync anyway so the mods are ready once Fabric is installed." -ForegroundColor Yellow
+    Write-Host ""
+} else {
+    Write-Host "Fabric Loader $preflightLoader found for Minecraft $GameVersion." -ForegroundColor Green
+}
+
+# =============================== Phase 1: sync ===============================
 
 $modsDir = Join-Path $MinecraftDir "mods"
 if (-not (Test-Path $modsDir)) {
@@ -348,33 +399,9 @@ foreach ($filename in $jarInfoByFile.Keys) {
     }
 }
 
-function Find-InstalledLoaderVersion($minecraftDir) {
-    # Vanilla/official launcher: versions\fabric-loader-<version>-<mcversion>\
-    $versionsDir = Join-Path $minecraftDir "versions"
-    if (Test-Path $versionsDir) {
-        $match = Get-ChildItem -Path $versionsDir -Directory -ErrorAction SilentlyContinue |
-            Where-Object { $_.Name -match '^fabric-loader-([\d.]+)-' } |
-            Select-Object -First 1
-        if ($match -and $match.Name -match '^fabric-loader-([\d.]+)-') {
-            return $matches[1]
-        }
-    }
-    # Prism Launcher / MultiMC: the instance root (one level up from .minecraft)
-    # has an mmc-pack.json listing components, including the loader version.
-    $packPath = Join-Path (Split-Path $minecraftDir -Parent) "mmc-pack.json"
-    if (Test-Path $packPath) {
-        try {
-            $pack = Get-Content $packPath -Raw | ConvertFrom-Json
-            $comp = $pack.components | Where-Object { $_.uid -eq "net.fabricmc.fabric-loader" }
-            if ($comp) { return $comp.version }
-        } catch {}
-    }
-    return $null
-}
-
 if ($loaderRequirements.Count -gt 0) {
     Write-Host ""
-    $detectedLoader = Find-InstalledLoaderVersion $MinecraftDir
+    $detectedLoader = Find-InstalledLoaderVersion $MinecraftDir $GameVersion
     $loaderOk = $true
     $unsatisfied = @()
     foreach ($req in $loaderRequirements) {
@@ -499,6 +526,9 @@ if ($broken.Count -eq 0) {
 
 Write-Host ""
 Write-Host "=== Done ===" -ForegroundColor Cyan
-if ($failed.Count -eq 0 -and $broken.Count -eq 0) {
+if ($fabricMissing) {
+    Write-Host "Mods are synced, but you are NOT ready to connect yet:" -ForegroundColor Red
+    Write-FabricMissingWarning
+} elseif ($failed.Count -eq 0 -and $broken.Count -eq 0) {
     Write-Host "Your mods folder matches the server and nothing else was broken. You're good to connect!" -ForegroundColor Green
 }
